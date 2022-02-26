@@ -31,7 +31,7 @@
       v-if="filteredContacts.length > filteredContactsMax.length"
       class="is-size-4 is-flex is-justify-content-center"
     >
-      Loading more contacts...
+      Keep scrolling to load more contacts...
     </h3>
   </div>
 </template>
@@ -48,8 +48,7 @@ export default {
     return {
       search: '',
       bottom: false,
-      maxInitialContacts: 5,
-      filteredContactsMax: [],
+      maxContacts: 5,
     }
   },
   created() {
@@ -58,17 +57,9 @@ export default {
     window.addEventListener('scroll', () => {
       this.bottom = this.bottomVisible()
     })
-    // set max initial contacts
-    this.filteredContactsMax = this.filteredContacts.slice(
-      0,
-      this.maxInitialContacts
-    )
   },
   computed: {
     ...mapState('contact', ['contacts']),
-    page() {
-      return parseInt(this.$route.query.page) || 1
-    },
     // the filtered contact list by search (name or phone number)
     filteredContacts() {
       return this.contacts.filter((contact) => {
@@ -80,11 +71,16 @@ export default {
         )
       })
     },
+    // the number of contacts displayed (while infinite scrolling)
+    // dependent on the watcher this.bottom
+    filteredContactsMax() {
+      return this.filteredContacts.slice(0, this.maxContacts)
+    },
   },
   watch: {
     bottom(newValue) {
       if (newValue) {
-        this.loadMore()
+        this.maxContacts += 1
       }
     },
   },
@@ -95,14 +91,6 @@ export default {
       const pageHeight = document.documentElement.scrollHeight
       const bottomOfPage = visible + scrollY >= pageHeight
       return bottomOfPage || pageHeight < visible
-    },
-    // set the number of contacts displayed (while infinite scrolling)
-    loadMore() {
-      if (this.filteredContactsMax.length === this.filteredContacts.length)
-        return
-      this.filteredContactsMax.push(
-        this.filteredContacts[this.filteredContactsMax.length]
-      )
     },
   },
 }
