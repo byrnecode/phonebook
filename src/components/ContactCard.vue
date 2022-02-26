@@ -1,8 +1,4 @@
 <template>
-  <!-- <router-link
-    class="contact-link"
-    :to="{ name: 'contact-show', params: { id: contact.id } }"
-  > -->
   <div class="card my-5">
     <header class="card-header">
       <p class="card-header-title">{{ fullName }}</p>
@@ -18,7 +14,12 @@
       </div>
     </div>
     <footer class="card-footer">
-      <a href="#" class="card-footer-item">Edit</a>
+      <router-link
+        href="#"
+        class="card-footer-item"
+        :to="{ name: 'contact-edit', params: { id: contact.id } }"
+        >Edit</router-link
+      >
       <a
         href="#"
         class="card-footer-item"
@@ -28,7 +29,6 @@
       >
     </footer>
   </div>
-  <!-- </router-link> -->
 </template>
 
 <script>

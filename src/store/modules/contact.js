@@ -15,6 +15,12 @@ export const mutations = {
   DELETE_CONTACT(state, contact) {
     state.contacts = state.contacts.filter((c) => c.id !== contact.id)
   },
+  EDIT_CONTACT(state, contact) {
+    const index = state.contacts.findIndex((c) => c.id === contact.id)
+    if (index >= 0) {
+      console.log(state.contacts.splice(index, 1, contact))
+    }
+  },
   SET_CONTACTS(state, contacts) {
     state.contacts = contacts
   },
@@ -42,6 +48,15 @@ export const actions = {
     }
     dispatch('notification/add', notification, { root: true })
     commit('SET_CONTACT_TO_DELETE', null)
+  },
+  editContact({ state, commit, dispatch }, contact) {
+    commit('EDIT_CONTACT', contact)
+    localStorage.setItem('aloware-phonebook', JSON.stringify(state.contacts))
+    const notification = {
+      type: 'success',
+      message: 'Your contact has been updated!',
+    }
+    dispatch('notification/add', notification, { root: true })
   },
   fetchContacts({ commit }) {
     const phonebookData =

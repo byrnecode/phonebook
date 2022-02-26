@@ -16,7 +16,7 @@
           your contact list?
         </p>
       </section>
-      <footer class="modal-card-foot">
+      <footer class="modal-card-foot is-justify-content-end">
         <button class="button is-danger" @click.prevent="deleteContact">
           Yes, Delete
         </button>
