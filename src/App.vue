@@ -1,15 +1,32 @@
 <template>
   <div id="app">
-    <nav>
-      <router-link :to="{ name: 'contact-list' }">List</router-link> |
-      <router-link :to="{ name: 'contact-create' }">Create</router-link>
-    </nav>
+    <MainNav />
+    <NotificationContainer />
     <div class="section">
       <div class="container">
-        <router-view />
+        <div class="columns">
+          <div class="column is-8 is-offset-2">
+            <router-view />
+          </div>
+        </div>
       </div>
     </div>
+    <DeleteAlert />
   </div>
 </template>
+
+<script>
+import MainNav from '@/components/MainNav.vue'
+import NotificationContainer from '@/components/NotificationContainer.vue'
+import DeleteAlert from '@/components/DeleteAlert.vue'
+
+export default {
+  components: {
+    MainNav,
+    NotificationContainer,
+    DeleteAlert,
+  },
+}
+</script>
 
 <style lang="scss"></style>

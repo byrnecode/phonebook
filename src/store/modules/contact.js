@@ -5,17 +5,21 @@ export const namespaced = true
 export const state = {
   contacts: [],
   contactsTotal: 0,
+  contactToDelete: null,
 }
 
 export const mutations = {
   ADD_CONTACT(state, contact) {
     state.contacts.push(contact)
   },
+  DELETE_CONTACT(state, contact) {
+    state.contacts = state.contacts.filter((c) => c.id !== contact.id)
+  },
   SET_CONTACTS(state, contacts) {
     state.contacts = contacts
   },
-  SET_CONTACTS_TOTAL(state, contactsTotal) {
-    state.contactsTotal = contactsTotal
+  SET_CONTACT_TO_DELETE(state, contact) {
+    state.contactToDelete = contact
   },
 }
 
@@ -29,11 +33,23 @@ export const actions = {
     }
     dispatch('notification/add', notification, { root: true })
   },
+  deleteContact({ state, commit, dispatch }, contact) {
+    commit('DELETE_CONTACT', contact)
+    localStorage.setItem('aloware-phonebook', JSON.stringify(state.contacts))
+    const notification = {
+      type: 'danger',
+      message: 'Your contact has been deleted!',
+    }
+    dispatch('notification/add', notification, { root: true })
+    commit('SET_CONTACT_TO_DELETE', null)
+  },
   fetchContacts({ commit }) {
     const phonebookData =
       JSON.parse(localStorage.getItem('aloware-phonebook')) || []
-    commit('SET_CONTACTS_TOTAL', phonebookData.length)
     commit('SET_CONTACTS', phonebookData)
+  },
+  setContactToDelete({ commit }, contact) {
+    commit('SET_CONTACT_TO_DELETE', contact)
   },
 }
 export const getters = {

@@ -1,11 +1,18 @@
 <template>
   <div>
-    <h1>Contact Create</h1>
+    <h1 class="is-size-3">Add Contact</h1>
+    <ContactForm />
   </div>
 </template>
 
 <script>
-export default {}
+import ContactForm from '@/components/ContactForm.vue'
+
+export default {
+  components: {
+    ContactForm,
+  },
+}
 </script>
 
 <style lang="scss" scoped></style>

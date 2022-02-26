@@ -9,7 +9,7 @@
     </header>
     <div class="card-content">
       <div class="content">
-        Phone Number: <strong>{{ contact.number }}</strong>
+        Phone Number: <strong>{{ contact.phoneNumber }}</strong>
         <br />
         Created at:
         <strong>
@@ -19,7 +19,13 @@
     </div>
     <footer class="card-footer">
       <a href="#" class="card-footer-item">Edit</a>
-      <a href="#" class="card-footer-item">Delete</a>
+      <a
+        href="#"
+        class="card-footer-item"
+        data-target="delete-contact-modal"
+        @click.prevent="deleteContact"
+        >Delete</a
+      >
     </footer>
   </div>
   <!-- </router-link> -->
@@ -28,11 +34,19 @@
 <script>
 export default {
   props: {
-    contact: Object,
+    contact: {
+      type: Object,
+      required: true,
+    },
   },
   computed: {
     fullName() {
       return this.contact.firstName + ' ' + this.contact.lastName
+    },
+  },
+  methods: {
+    deleteContact() {
+      this.$store.dispatch('contact/setContactToDelete', this.contact)
     },
   },
 }
