@@ -130,12 +130,16 @@ export default {
     },
     sortByCreatedDesc() {
       return [...this.filteredContacts].sort((a, b) => {
-        return new Date(b.createdAt) - new Date(a.createdAt)
+        const dateA = new Date(a.createdAt)
+        const dateB = new Date(b.createdAt)
+        return dateB > dateA ? 1 : dateB < dateA ? -1 : 0
       })
     },
     sortByCreatedAsc() {
       return [...this.filteredContacts].sort((a, b) => {
-        return new Date(a.createdAt) - new Date(b.createdAt)
+        const dateA = new Date(a.createdAt)
+        const dateB = new Date(b.createdAt)
+        return dateA > dateB ? 1 : dateA < dateB ? -1 : 0
       })
     },
     sortByNameAsc() {
