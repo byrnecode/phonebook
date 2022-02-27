@@ -18,7 +18,7 @@ export const mutations = {
   EDIT_CONTACT(state, contact) {
     const index = state.contacts.findIndex((c) => c.id === contact.id)
     if (index >= 0) {
-      console.log(state.contacts.splice(index, 1, contact))
+      state.contacts.splice(index, 1, contact)
     }
   },
   SET_CONTACTS(state, contacts) {

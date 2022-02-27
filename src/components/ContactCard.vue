@@ -78,6 +78,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.card-header-icon {
+  cursor: auto;
+}
 .favorite {
   color: #00d1b2;
   font-size: 1.5rem;

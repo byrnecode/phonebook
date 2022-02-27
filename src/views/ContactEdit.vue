@@ -1,7 +1,7 @@
 <template>
   <div>
     <h1 class="is-size-3">Edit Contact</h1>
-    <ContactForm :contact-id="id" />
+    <ContactForm :contact-id="contactId" />
   </div>
 </template>
 
@@ -13,6 +13,11 @@ export default {
     ContactForm,
   },
   props: ['id'],
+  computed: {
+    contactId() {
+      return this.id ? parseInt(this.id, 10) : null
+    },
+  },
 }
 </script>
 

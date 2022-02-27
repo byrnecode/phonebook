@@ -75,7 +75,7 @@ import { mapGetters } from 'vuex'
 export default {
   props: {
     contactId: {
-      type: [Number, String],
+      type: [Number],
       required: false,
     },
   },
