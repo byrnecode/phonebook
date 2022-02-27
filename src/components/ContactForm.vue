@@ -171,7 +171,7 @@ export default {
       this.phoneNumberTouched = true
       // check first if number already exists
       const found = this.getContactByPhoneNum(this.phoneNumber)
-      if (found) {
+      if (found && found.id !== this.contactId) {
         this.formattedNumError = `Error: Phone number ${this.phoneNumber} already exists!`
       }
       // check for other form errors
