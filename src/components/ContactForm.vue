@@ -35,13 +35,16 @@
       <div class="control">
         <input
           class="input"
-          :class="{ 'is-danger': phoneNumberError }"
-          type="text"
+          :class="{ 'is-danger': phoneNumberError || formattedNumError }"
+          type="tel"
           placeholder="+14244048668"
           v-model="phoneNumber"
           @blur="phoneNumberTouched = true"
         />
       </div>
+      <p v-if="formattedNumError" class="help is-danger">
+        {{ formattedNumError }}
+      </p>
       <p v-if="phoneNumberError" class="help is-danger">
         This field is required
       </p>
@@ -71,6 +74,11 @@
 
 <script>
 import { mapGetters } from 'vuex'
+import {
+  PhoneNumberFormat as PNF,
+  PhoneNumberUtil,
+} from 'google-libphonenumber'
+const phoneUtil = PhoneNumberUtil.getInstance()
 
 export default {
   props: {
@@ -87,10 +95,11 @@ export default {
       firstNameTouched: false,
       lastNameTouched: false,
       phoneNumberTouched: false,
+      formattedNumError: '',
     }
   },
   computed: {
-    ...mapGetters('contact', ['getContactById']),
+    ...mapGetters('contact', ['getContactById', 'getContactByPhoneNum']),
     firstNameError() {
       return !this.firstName && this.firstNameTouched ? true : false
     },
@@ -103,6 +112,31 @@ export default {
     contact() {
       return this.contactId ? this.getContactById(this.contactId) : null
     },
+    hasErrors() {
+      return (
+        this.firstNameError ||
+        this.lastNameError ||
+        this.phoneNumberError ||
+        this.formattedNumError
+      )
+    },
+  },
+  watch: {
+    phoneNumber(val) {
+      if (!val) {
+        // always clear if no user input
+        this.formattedNumError = ''
+      } else if (val && val.length > 1) {
+        try {
+          // parse and validate phone number
+          const number = phoneUtil.parseAndKeepRawInput(val, 'US')
+          this.phoneNumber = phoneUtil.format(number, PNF.E164)
+          this.formattedNumError = ''
+        } catch (error) {
+          this.formattedNumError = error
+        }
+      }
+    },
   },
   mounted() {
     if (this.contact) {
@@ -113,7 +147,8 @@ export default {
   },
   methods: {
     create() {
-      const id = Math.floor(Math.random() * 10000000) // psuedo random id, on prod we can use something like uuid package
+      // generate psuedo random id, on prod we can use something like uuid package
+      const id = Math.floor(Math.random() * 10000000)
       this.$store.dispatch('contact/createContact', {
         id,
         firstName: this.firstName,
@@ -134,12 +169,13 @@ export default {
       this.firstNameTouched = true
       this.lastNameTouched = true
       this.phoneNumberTouched = true
-      // simple check if fields are blank
-      if (
-        !this.firstNameError &&
-        !this.lastNameError &&
-        !this.phoneNumberError
-      ) {
+      // check first if number already exists
+      const found = this.getContactByPhoneNum(this.phoneNumber)
+      if (found) {
+        this.formattedNumError = `Error: Phone number ${this.phoneNumber} already exists!`
+      }
+      // check for other form errors
+      if (!this.hasErrors) {
         // if we have contactId props, then we are editing
         if (this.contactId) {
           this.edit()
@@ -156,6 +192,7 @@ export default {
       this.firstName = ''
       this.lastName = ''
       this.phoneNumber = ''
+      this.formattedNumError = ''
     },
     getDateTime() {
       const today = new Date()

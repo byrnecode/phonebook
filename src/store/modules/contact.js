@@ -71,4 +71,7 @@ export const getters = {
   getContactById: (state) => (id) => {
     return state.contacts.find((contact) => contact.id === id)
   },
+  getContactByPhoneNum: (state) => (phoneNumber) => {
+    return state.contacts.find((contact) => contact.phoneNumber === phoneNumber)
+  },
 }
