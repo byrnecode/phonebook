@@ -1,3 +1,12 @@
+<script setup>
+defineProps({
+  resource: {
+    type: [String, Number],
+    required: true,
+  },
+})
+</script>
+
 <template>
   <div>
     <h1 class="is-size-1">404</h1>
@@ -9,16 +18,5 @@
     </p>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    resource: {
-      type: [String, Number],
-      required: true,
-    },
-  },
-}
-</script>
 
 <style scoped></style>

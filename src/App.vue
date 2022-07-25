@@ -1,3 +1,9 @@
+<script setup>
+import MainNav from '@/components/MainNav.vue'
+import NotificationContainer from '@/components/NotificationContainer.vue'
+import DeleteAlert from '@/components/DeleteAlert.vue'
+</script>
+
 <template>
   <div id="app">
     <MainNav />
@@ -14,11 +20,5 @@
     <DeleteAlert />
   </div>
 </template>
-
-<script setup>
-import MainNav from '@/components/MainNav.vue'
-import NotificationContainer from '@/components/NotificationContainer.vue'
-import DeleteAlert from '@/components/DeleteAlert.vue'
-</script>
 
 <style lang="scss"></style>
