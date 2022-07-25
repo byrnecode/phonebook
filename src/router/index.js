@@ -1,9 +1,6 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
+import { createRouter, createWebHistory } from 'vue-router'
 import ContactList from '../views/ContactList.vue'
 import store from '@/store/index.js'
-
-Vue.use(VueRouter)
 
 const routes = [
   {
@@ -53,13 +50,13 @@ const routes = [
     props: true,
   },
   {
-    path: '*',
+    path: '/:catchAll(.*)',
     redirect: { name: '404', params: { resource: 'page' } },
   },
 ]
 
-const router = new VueRouter({
-  mode: 'history',
+const router = createRouter({
+  history: createWebHistory(process.env.BASE_URL),
   base: process.env.BASE_URL,
   routes,
 })

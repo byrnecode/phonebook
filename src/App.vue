@@ -15,18 +15,10 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import MainNav from '@/components/MainNav.vue'
 import NotificationContainer from '@/components/NotificationContainer.vue'
 import DeleteAlert from '@/components/DeleteAlert.vue'
-
-export default {
-  components: {
-    MainNav,
-    NotificationContainer,
-    DeleteAlert,
-  },
-}
 </script>
 
 <style lang="scss"></style>
