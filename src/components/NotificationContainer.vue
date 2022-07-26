@@ -1,3 +1,14 @@
+<script setup>
+import NotificationAlert from '@/components/NotificationAlert.vue'
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+const notifications = computed(() => {
+  return store.state.notification.notifications
+})
+</script>
+
 <template>
   <div class="notification-container">
     <NotificationAlert
@@ -7,18 +18,6 @@
     />
   </div>
 </template>
-
-<script>
-import NotificationAlert from '@/components/NotificationAlert.vue'
-import { mapState } from 'vuex'
-
-export default {
-  components: {
-    NotificationAlert,
-  },
-  computed: mapState('notification', ['notifications']),
-}
-</script>
 
 <style lang="scss" scoped>
 .notification-container {

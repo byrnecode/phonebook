@@ -1,3 +1,13 @@
+<script setup>
+import { ref } from 'vue'
+
+const isActive = ref(false)
+
+function toggleMenu() {
+  isActive.value = !isActive.value
+}
+</script>
+
 <template>
   <div class="container">
     <div class="columns">
@@ -48,20 +58,5 @@
     </div>
   </div>
 </template>
-
-<script>
-export default {
-  data() {
-    return {
-      isActive: false,
-    }
-  },
-  methods: {
-    toggleMenu() {
-      this.isActive = !this.isActive
-    },
-  },
-}
-</script>
 
 <style lang="scss" scoped></style>

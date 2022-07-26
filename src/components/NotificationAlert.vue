@@ -1,38 +1,38 @@
+<script setup>
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useStore } from 'vuex'
+
+const props = defineProps({
+  notification: {
+    type: Object,
+    required: true,
+  },
+})
+
+const timeOut = ref(null)
+
+const store = useStore()
+function remove(notificationToRemove) {
+  store.dispatch('notification/remove', notificationToRemove)
+}
+
+const notificationTypeClass = computed(() => {
+  return `is-${props.notification.type}`
+})
+
+onMounted(() => {
+  timeOut.value = setTimeout(() => remove(props.notification), 5000)
+})
+onUnmounted(() => {
+  clearTimeout(timeOut.value)
+})
+</script>
+
 <template>
   <div class="notification is-light my-4" :class="notificationTypeClass">
     <button class="delete" @click="remove(notification)"></button>
     {{ notification.message }}
   </div>
 </template>
-
-<script>
-import { mapActions } from 'vuex'
-
-export default {
-  props: {
-    notification: {
-      type: Object,
-      required: true,
-    },
-  },
-  data() {
-    return {
-      timeout: null,
-    }
-  },
-  mounted() {
-    this.timeout = setTimeout(() => this.remove(this.notification), 5000)
-  },
-  beforeDestroy() {
-    clearTimeout(this.timeout)
-  },
-  computed: {
-    notificationTypeClass() {
-      return `is-${this.notification.type}`
-    },
-  },
-  methods: mapActions('notification', ['remove']),
-}
-</script>
 
 <style lang="scss" scoped></style>

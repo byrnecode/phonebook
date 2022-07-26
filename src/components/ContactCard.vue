@@ -1,3 +1,36 @@
+<script setup>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const props = defineProps({
+  contact: {
+    type: Object,
+    required: true,
+  },
+})
+
+const fullName = computed(() => {
+  return props.contact.firstName + ' ' + props.contact.lastName
+})
+
+const favoriteText = computed(() => {
+  return props.contact.favorite ? 'Remove from Favorites' : 'Mark as Favorite'
+})
+
+function deleteContact() {
+  store.dispatch('contact/setContactToDelete', props.contact)
+}
+
+function toggleFavorite() {
+  store.dispatch('contact/editContact', {
+    ...props.contact,
+    favorite: props.contact.favorite ? false : true,
+  })
+}
+</script>
+
 <template>
   <div class="card my-5">
     <header class="card-header">
@@ -44,38 +77,6 @@
     </footer>
   </div>
 </template>
-
-<script>
-export default {
-  props: {
-    contact: {
-      type: Object,
-      required: true,
-    },
-  },
-  computed: {
-    fullName() {
-      return this.contact.firstName + ' ' + this.contact.lastName
-    },
-    favoriteText() {
-      return this.contact.favorite
-        ? 'Remove from Favorites'
-        : 'Mark as Favorite'
-    },
-  },
-  methods: {
-    deleteContact() {
-      this.$store.dispatch('contact/setContactToDelete', this.contact)
-    },
-    toggleFavorite() {
-      this.$store.dispatch('contact/editContact', {
-        ...this.contact,
-        favorite: this.contact.favorite ? false : true,
-      })
-    },
-  },
-}
-</script>
 
 <style lang="scss" scoped>
 .card-header-icon {

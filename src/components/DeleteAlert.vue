@@ -1,3 +1,35 @@
+<script setup>
+import { computed } from 'vue'
+import { useStore } from 'vuex'
+
+const store = useStore()
+
+const contactToDelete = computed(() => {
+  return store.state.contact.contactToDelete
+})
+
+const fullName = computed(() => {
+  if (contactToDelete.value) {
+    return (
+      contactToDelete.value.firstName + ' ' + contactToDelete.value.lastName
+    )
+  }
+  return ''
+})
+
+const isActive = computed(() => {
+  return contactToDelete.value ? true : false
+})
+
+function deleteContact() {
+  store.dispatch('contact/deleteContact', contactToDelete.value)
+}
+
+function cancel() {
+  store.dispatch('contact/setContactToDelete', null)
+}
+</script>
+
 <template>
   <div
     id="delete-contact-modal"
@@ -25,34 +57,5 @@
     </div>
   </div>
 </template>
-
-<script>
-import { mapState } from 'vuex'
-
-export default {
-  computed: {
-    ...mapState('contact', ['contactToDelete']),
-    fullName() {
-      if (this.contactToDelete) {
-        return (
-          this.contactToDelete.firstName + ' ' + this.contactToDelete.lastName
-        )
-      }
-      return ''
-    },
-    isActive() {
-      return this.contactToDelete ? true : false
-    },
-  },
-  methods: {
-    deleteContact() {
-      this.$store.dispatch('contact/deleteContact', this.contactToDelete)
-    },
-    cancel() {
-      this.$store.dispatch('contact/setContactToDelete', null)
-    },
-  },
-}
-</script>
 
 <style lang="scss" scoped></style>

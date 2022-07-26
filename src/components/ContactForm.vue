@@ -1,3 +1,150 @@
+<script setup>
+import { ref, computed, watch, onMounted } from 'vue'
+import { useStore } from 'vuex'
+import { useRouter } from 'vue-router'
+import {
+  PhoneNumberFormat as PNF,
+  PhoneNumberUtil,
+} from 'google-libphonenumber'
+const phoneUtil = PhoneNumberUtil.getInstance()
+
+const store = useStore()
+const router = useRouter()
+
+const props = defineProps({
+  contactId: {
+    type: [Number],
+    required: false,
+  },
+})
+
+const firstName = ref('')
+const lastName = ref('')
+const phoneNumber = ref('')
+const firstNameTouched = ref(false)
+const lastNameTouched = ref(false)
+const phoneNumberTouched = ref(false)
+const formattedNumError = ref('')
+
+const getContactById = computed(() => {
+  return store.getters['contact/getContactById'](props.contactId)
+})
+
+const getContactByPhoneNum = computed(() => {
+  return store.getters['contact/getContactByPhoneNum'](phoneNumber.value)
+})
+
+const firstNameError = computed(() => {
+  return !firstName.value && firstNameTouched.value ? true : false
+})
+
+const lastNameError = computed(() => {
+  return !lastName.value && lastNameTouched.value ? true : false
+})
+
+const phoneNumberError = computed(() => {
+  return !phoneNumber.value && phoneNumberTouched.value ? true : false
+})
+
+const contact = computed(() => {
+  return props.contactId ? getContactById.value : null
+})
+
+const hasErrors = computed(() => {
+  return (
+    firstNameError.value ||
+    lastNameError.value ||
+    phoneNumberError.value ||
+    formattedNumError.value
+  )
+})
+
+watch(phoneNumber, (val) => {
+  if (!val) {
+    // always clear if no user input
+    formattedNumError.value = ''
+  } else if (val && val.length > 1) {
+    try {
+      // parse and validate phone number
+      const number = phoneUtil.parseAndKeepRawInput(val, 'US')
+      phoneNumber.value = phoneUtil.format(number, PNF.E164)
+      formattedNumError.value = ''
+    } catch (error) {
+      formattedNumError.value = error
+    }
+  }
+})
+
+onMounted(() => {
+  if (contact.value) {
+    firstName.value = contact.value.firstName
+    lastName.value = contact.value.lastName
+    phoneNumber.value = contact.value.phoneNumber
+  }
+})
+
+function create() {
+  // generate psuedo random id, on prod we can use something like uuid package
+  const id = Math.floor(Math.random() * 10000000)
+  store.dispatch('contact/createContact', {
+    id,
+    firstName: firstName.value,
+    lastName: lastName.value,
+    phoneNumber: phoneNumber.value,
+    createdAt: getDateTime(),
+  })
+}
+
+function edit() {
+  store.dispatch('contact/editContact', {
+    ...contact.value,
+    firstName: firstName.value,
+    lastName: lastName.value,
+    phoneNumber: phoneNumber.value,
+  })
+}
+
+function submit() {
+  firstNameTouched.value = true
+  lastNameTouched.value = true
+  phoneNumberTouched.value = true
+  // check first if number already exists
+  const found = getContactByPhoneNum.value
+  if (found && found.id !== props.contactId) {
+    formattedNumError.value = `Error: Phone number ${phoneNumber.value} already exists!`
+  }
+  // check for other form errors
+  if (!hasErrors.value) {
+    // if we have contactId props, then we are editing
+    if (props.contactId) {
+      edit()
+    }
+    // else create new contact
+    else {
+      create()
+    }
+    clear()
+    router.push({ name: 'contact-list' })
+  }
+}
+
+function clear() {
+  firstName.value = ''
+  lastName.value = ''
+  phoneNumber.value = ''
+  formattedNumError.value = ''
+}
+
+function getDateTime() {
+  const today = new Date()
+  const date =
+    today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate()
+  const time =
+    today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
+  return date + ' ' + time
+}
+</script>
+
 <template>
   <form class="my-5">
     <div class="field">
@@ -71,144 +218,6 @@
     </div>
   </form>
 </template>
-
-<script>
-import { mapGetters } from 'vuex'
-import {
-  PhoneNumberFormat as PNF,
-  PhoneNumberUtil,
-} from 'google-libphonenumber'
-const phoneUtil = PhoneNumberUtil.getInstance()
-
-export default {
-  props: {
-    contactId: {
-      type: [Number],
-      required: false,
-    },
-  },
-  data() {
-    return {
-      firstName: '',
-      lastName: '',
-      phoneNumber: '',
-      firstNameTouched: false,
-      lastNameTouched: false,
-      phoneNumberTouched: false,
-      formattedNumError: '',
-    }
-  },
-  computed: {
-    ...mapGetters('contact', ['getContactById', 'getContactByPhoneNum']),
-    firstNameError() {
-      return !this.firstName && this.firstNameTouched ? true : false
-    },
-    lastNameError() {
-      return !this.lastName && this.lastNameTouched ? true : false
-    },
-    phoneNumberError() {
-      return !this.phoneNumber && this.phoneNumberTouched ? true : false
-    },
-    contact() {
-      return this.contactId ? this.getContactById(this.contactId) : null
-    },
-    hasErrors() {
-      return (
-        this.firstNameError ||
-        this.lastNameError ||
-        this.phoneNumberError ||
-        this.formattedNumError
-      )
-    },
-  },
-  watch: {
-    phoneNumber(val) {
-      if (!val) {
-        // always clear if no user input
-        this.formattedNumError = ''
-      } else if (val && val.length > 1) {
-        try {
-          // parse and validate phone number
-          const number = phoneUtil.parseAndKeepRawInput(val, 'US')
-          this.phoneNumber = phoneUtil.format(number, PNF.E164)
-          this.formattedNumError = ''
-        } catch (error) {
-          this.formattedNumError = error
-        }
-      }
-    },
-  },
-  mounted() {
-    if (this.contact) {
-      this.firstName = this.contact.firstName
-      this.lastName = this.contact.lastName
-      this.phoneNumber = this.contact.phoneNumber
-    }
-  },
-  methods: {
-    create() {
-      // generate psuedo random id, on prod we can use something like uuid package
-      const id = Math.floor(Math.random() * 10000000)
-      this.$store.dispatch('contact/createContact', {
-        id,
-        firstName: this.firstName,
-        lastName: this.lastName,
-        phoneNumber: this.phoneNumber,
-        createdAt: this.getDateTime(),
-      })
-    },
-    edit() {
-      this.$store.dispatch('contact/editContact', {
-        ...this.contact,
-        firstName: this.firstName,
-        lastName: this.lastName,
-        phoneNumber: this.phoneNumber,
-      })
-    },
-    submit() {
-      this.firstNameTouched = true
-      this.lastNameTouched = true
-      this.phoneNumberTouched = true
-      // check first if number already exists
-      const found = this.getContactByPhoneNum(this.phoneNumber)
-      if (found && found.id !== this.contactId) {
-        this.formattedNumError = `Error: Phone number ${this.phoneNumber} already exists!`
-      }
-      // check for other form errors
-      if (!this.hasErrors) {
-        // if we have contactId props, then we are editing
-        if (this.contactId) {
-          this.edit()
-        }
-        // else create new contact
-        else {
-          this.create()
-        }
-        this.clear()
-        this.$router.push({ name: 'contact-list' })
-      }
-    },
-    clear() {
-      this.firstName = ''
-      this.lastName = ''
-      this.phoneNumber = ''
-      this.formattedNumError = ''
-    },
-    getDateTime() {
-      const today = new Date()
-      const date =
-        today.getFullYear() +
-        '-' +
-        (today.getMonth() + 1) +
-        '-' +
-        today.getDate()
-      const time =
-        today.getHours() + ':' + today.getMinutes() + ':' + today.getSeconds()
-      return date + ' ' + time
-    },
-  },
-}
-</script>
 
 <style lang="scss" scoped>
 .cancel-btn {
