@@ -2,6 +2,21 @@
 import MainNav from '@/components/MainNav.vue'
 import NotificationContainer from '@/components/NotificationContainer.vue'
 import DeleteAlert from '@/components/DeleteAlert.vue'
+import { watch } from 'vue'
+import { storeToRefs } from 'pinia'
+import { useContactStore } from './stores/contact'
+
+const contactStore = useContactStore()
+const { contacts } = storeToRefs(contactStore)
+
+watch(
+  contacts,
+  (val) => {
+    // persist the contacts state to the local storage whenever it changes
+    localStorage.setItem('aloware-phonebook', JSON.stringify(val))
+  },
+  { deep: true }
+)
 </script>
 
 <template>

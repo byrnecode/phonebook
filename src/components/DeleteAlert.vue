@@ -1,11 +1,11 @@
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { useContactStore } from '@/stores/contact'
 
-const store = useStore()
+const contactStore = useContactStore()
 
 const contactToDelete = computed(() => {
-  return store.state.contact.contactToDelete
+  return contactStore.contactToDelete
 })
 
 const fullName = computed(() => {
@@ -22,11 +22,11 @@ const isActive = computed(() => {
 })
 
 function deleteContact() {
-  store.dispatch('contact/deleteContact', contactToDelete.value)
+  contactStore.deleteContact(contactToDelete.value)
 }
 
 function cancel() {
-  store.dispatch('contact/setContactToDelete', null)
+  contactStore.setContactToDelete(null)
 }
 </script>
 

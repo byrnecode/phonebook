@@ -1,17 +1,17 @@
 <script setup>
 import ContactCard from '@/components/ContactCard.vue'
 import { ref, computed } from 'vue'
-import { useStore } from 'vuex'
+import { useContactStore } from '@/stores/contact'
 import { useInfiniteScroll } from '@/composables/useInfiniteScroll.js'
 import { useSearch } from '@/composables/useSearch.js'
 import { useSortList } from '@/composables/useSortList.js'
 import { useFavoritesToggle } from '@/composables/useFavoritesToggle.js'
 
-const store = useStore()
+const contactStore = useContactStore()
 
 // featch contacts on first load
-store.dispatch('contact/fetchContacts')
-const contacts = computed(() => store.state.contact.contacts)
+contactStore.fetchContacts()
+const contacts = computed(() => contactStore.contacts)
 
 const { search, filteredContacts } = useSearch(contacts)
 

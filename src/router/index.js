@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import ContactList from '../views/ContactList.vue'
-import store from '@/store/index.js'
+import { useContactStore } from '@/stores/contact'
 
 const routes = [
   {
@@ -28,11 +28,12 @@ const routes = [
     beforeEnter: (to, from, next) => {
       // if directly going to this route by typing in the url
       // or from a page refresh, we need to fetch the contacts
+      const contactStore = useContactStore()
       if (from.matched.length === 0) {
-        store.dispatch('contact/fetchContacts')
+        contactStore.fetchContacts()
       }
       const { id } = to.params
-      const contact = store.getters['contact/getContactById'](parseInt(id, 10))
+      const contact = contactStore.getContactById(parseInt(id, 10))
       // for unknown contact id, redirect to 404
       if (!contact)
         router.push({

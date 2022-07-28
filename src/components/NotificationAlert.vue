@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
-import { useStore } from 'vuex'
+import { useNotificationStore } from '@/stores/notification'
 
 const props = defineProps({
   notification: {
@@ -11,9 +11,9 @@ const props = defineProps({
 
 const timeOut = ref(null)
 
-const store = useStore()
+const notificationStore = useNotificationStore()
 function remove(notificationToRemove) {
-  store.dispatch('notification/remove', notificationToRemove)
+  notificationStore.remove(notificationToRemove)
 }
 
 const notificationTypeClass = computed(() => {

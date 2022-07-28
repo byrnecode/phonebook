@@ -1,6 +1,6 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
-import { useStore } from 'vuex'
+import { useContactStore } from '@/stores/contact'
 import { useRouter } from 'vue-router'
 import {
   PhoneNumberFormat as PNF,
@@ -8,7 +8,7 @@ import {
 } from 'google-libphonenumber'
 const phoneUtil = PhoneNumberUtil.getInstance()
 
-const store = useStore()
+const contactStore = useContactStore()
 const router = useRouter()
 
 const props = defineProps({
@@ -27,11 +27,11 @@ const phoneNumberTouched = ref(false)
 const formattedNumError = ref('')
 
 const getContactById = computed(() => {
-  return store.getters['contact/getContactById'](props.contactId)
+  return contactStore.getContactById(props.contactId)
 })
 
 const getContactByPhoneNum = computed(() => {
-  return store.getters['contact/getContactByPhoneNum'](phoneNumber.value)
+  return contactStore.getContactByPhoneNum(phoneNumber.value)
 })
 
 const firstNameError = computed(() => {
@@ -86,7 +86,7 @@ onMounted(() => {
 function create() {
   // generate psuedo random id, on prod we can use something like uuid package
   const id = Math.floor(Math.random() * 10000000)
-  store.dispatch('contact/createContact', {
+  contactStore.createContact({
     id,
     firstName: firstName.value,
     lastName: lastName.value,
@@ -96,7 +96,7 @@ function create() {
 }
 
 function edit() {
-  store.dispatch('contact/editContact', {
+  contactStore.editContact({
     ...contact.value,
     firstName: firstName.value,
     lastName: lastName.value,

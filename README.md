@@ -1,8 +1,8 @@
 # phonebook
 
-This app allows you to add/edit/delete contacts on your browser. It uses localstorage for storing the data.
+This app allows you to add/edit/delete contacts on your browser. It uses localstorage for storing the data. Implemented with Vue 3 using Compisition API.
 
-Created with vue-cli. Selected options: Vuex, Vue router, ESlint, Prettier, SASS
+Created with vue-cli, Pinia, Vue router, ESlint, Prettier, SASS
 
 Other Packages:
 
@@ -48,7 +48,7 @@ Available Routes:
 
 '/404' - `NotFound.vue` - Catch all 404 page
 
-Vuex store: 'src/store/index.js' - Vuex modules: contact and notification
+Pinia stores: 'src/stores/..' - contact and notification
 
 ## Checklist for this task
 
@@ -68,6 +68,6 @@ Rules:
 
 - Phone numbers need to be validated and fixed to E164 format using google-libphonenumber package.
 
-- All the data needs to be stored in Vuex storage and it needs to be persistent (should not go away with refresh).
+- All the data needs to be stored in Pinia storage and it needs to be persistent (should not go away with refresh).
 
 - The page should not refresh while you are adding a contact.

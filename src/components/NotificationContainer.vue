@@ -1,11 +1,11 @@
 <script setup>
 import NotificationAlert from '@/components/NotificationAlert.vue'
 import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { useNotificationStore } from '@/stores/notification'
 
-const store = useStore()
+const notificationStore = useNotificationStore()
 const notifications = computed(() => {
-  return store.state.notification.notifications
+  return notificationStore.notifications
 })
 </script>
 

@@ -1,8 +1,8 @@
 <script setup>
 import { computed } from 'vue'
-import { useStore } from 'vuex'
+import { useContactStore } from '@/stores/contact'
 
-const store = useStore()
+const contactStore = useContactStore()
 
 const props = defineProps({
   contact: {
@@ -20,11 +20,11 @@ const favoriteText = computed(() => {
 })
 
 function deleteContact() {
-  store.dispatch('contact/setContactToDelete', props.contact)
+  contactStore.setContactToDelete(props.contact)
 }
 
 function toggleFavorite() {
-  store.dispatch('contact/editContact', {
+  contactStore.editContact({
     ...props.contact,
     favorite: props.contact.favorite ? false : true,
   })
